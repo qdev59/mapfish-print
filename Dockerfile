@@ -14,6 +14,8 @@ COPY publish/build.gradle ./publish/
 COPY core ./core
 COPY checkstyle_* ./
 
+RUN echo "Run `./gradlew googleJavaFormat` to fix the following errors" &&\
+    gradle verifyGoogleJavaFormat
 # '&& touch success || true' is a trick to be able to get out some artifacts
 RUN gradle :core:build :core:explodedWar :core:libSourcesJar :core:libJavadocJar && touch success || true
 

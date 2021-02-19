@@ -11,8 +11,11 @@ buildscript {
         classpath "gradle.plugin.com.github.spotbugs.snom:spotbugs-gradle-plugin:4.6.0"
         classpath "se.bjurr.violations:violations-gradle-plugin:1.48"
         classpath 'org.owasp:dependency-check-gradle:6.1.0'
+        classpath "gradle.plugin.com.github.sherter.google-java-format:google-java-format-gradle-plugin:0.9"
     }
 }
+
+apply plugin: "com.github.sherter.google-java-format"
 
 defaultTasks 'build'
 
