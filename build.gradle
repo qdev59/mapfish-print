@@ -1,21 +1,25 @@
+// https://stackoverflow.com/questions/49933616/cannot-add-plugin-to-gradle-build-file/49936581
+
 buildscript {
     repositories {
         mavenLocal()
+        mavenCentral()
+        google()
         jcenter()
         maven {
-            url "https://plugins.gradle.org/m2/"
+            url 'https://plugins.gradle.org/m2/'
         }
     }
 
     dependencies {
-        classpath "gradle.plugin.com.github.spotbugs.snom:spotbugs-gradle-plugin:4.6.0"
-        classpath "se.bjurr.violations:violations-gradle-plugin:1.48"
+        classpath 'gradle.plugin.com.github.spotbugs.snom:spotbugs-gradle-plugin:4.6.0'
+        classpath 'se.bjurr.violations:violations-gradle-plugin:1.48'
         classpath 'org.owasp:dependency-check-gradle:6.1.0'
-        classpath "gradle.plugin.com.github.sherter.google-java-format:google-java-format-gradle-plugin:0.9"
+        classpath 'gradle.plugin.com.github.sherter.google-java-format:google-java-format-gradle-plugin:0.9'
+        classpath 'com.google.googlejavaformat:google-java-format:1.8'
+        //classpath 'com.google.googlejavaformat:google-java-format:1.8'
     }
 }
-
-apply plugin: "com.github.sherter.google-java-format"
 
 defaultTasks 'build'
 
@@ -25,16 +29,30 @@ wrapper {
 }
 
 allprojects {
+    buildscript {
+        repositories {
+            mavenLocal()
+            mavenCentral()
+            google()
+            jcenter()
+            maven {
+                url 'https://plugins.gradle.org/m2/'
+            }
+        }
+    }
+
     group = 'org.mapfish.print'
     version = '3.28.0'
-    ext.junitVersion = "4.13.1"
-    ext.groovyVersion = "3.0.7"
+    ext.junitVersion = '4.13.1'
+    ext.groovyVersion = '3.0.7'
     ext.spotbugsVersion = '4.1.4'
-    ext.jasperreportVersion = "6.16.0"
+    ext.jasperreportVersion = '6.16.0'
 
     apply plugin: 'org.owasp.dependencycheck'
+    apply plugin: 'com.github.sherter.google-java-format'
+
     dependencyCheck {
-        outputDirectory = "security-report"
+        outputDirectory = 'security-report'
     }
 }
 
@@ -49,13 +67,13 @@ apply plugin: 'org.owasp.dependencycheck'
 configure(subprojects.findAll { ['core', 'examples', 'docs'].contains(it.name) }) {
     repositories {
         mavenLocal()
-        maven { url "http://download.osgeo.org/webdav/geotools" }
+        maven { url 'http://download.osgeo.org/webdav/geotools' }
         mavenCentral()
         jcenter()
-        maven { url "https://dl.bintray.com/readytalk/maven" }
-        maven { url "https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts" }
-        maven { url "https://repo.osgeo.org/repository/release/" }
-        maven { url "https://download.osgeo.org/webdav/geotools/" }
+        maven { url 'https://dl.bintray.com/readytalk/maven' }
+        maven { url 'https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts' }
+        maven { url 'https://repo.osgeo.org/repository/release/' }
+        maven { url 'https://download.osgeo.org/webdav/geotools/' }
     }
 }
 configure(subprojects.findAll { ['core', 'examples'].contains(it.name) }) {
@@ -66,11 +84,12 @@ configure(subprojects.findAll { ['core', 'examples'].contains(it.name) }) {
     apply plugin: 'project-report'
     apply plugin: 'checkstyle'
     apply plugin: 'se.bjurr.violations.violations-gradle-plugin'
+    apply plugin: 'com.github.sherter.google-java-format'
 
     jar.dependsOn(checkstyleMain)
 
     checkstyle {
-        toolVersion = "7.8.2"
+        toolVersion = '7.8.2'
         configFile = file("$rootProject.rootDir/checkstyle_checks.xml")
         configProperties = ['basedir': project.rootDir.path]
         ignoreFailures = true
@@ -82,8 +101,8 @@ configure(subprojects.findAll { ['core', 'examples'].contains(it.name) }) {
         toolVersion = "${project.spotbugsVersion}"
         ignoreFailures = true
         reportsDir = file("$project.buildDir/reports/spotbugsReports")
-        effort = "max"
-        reportLevel = "high"
+        effort = 'max'
+        reportLevel = 'high'
     }
     spotbugsTest.enabled = false
 
@@ -93,8 +112,8 @@ configure(subprojects.findAll { ['core', 'examples'].contains(it.name) }) {
         maxViolations = 0
         printViolations = true
         violations = [
-                ["FINDBUGS", ".", ".*/reports/spotbugsReports/.*\\.xml", "Spotbugs"],
-                ["CHECKSTYLE", ".", ".*/reports/checkstyleReports/.*\\.xml", "Checkstyle"]
+                ['FINDBUGS', '.', '.*/reports/spotbugsReports/.*\\.xml', 'Spotbugs'],
+                ['CHECKSTYLE', '.', '.*/reports/checkstyleReports/.*\\.xml', 'Checkstyle']
         ]
     }
     check.finalizedBy violations
@@ -113,8 +132,8 @@ configure(subprojects.findAll { ['core', 'examples'].contains(it.name) }) {
 
     test {
         jvmArgs '-XX:+CMSClassUnloadingEnabled'
-        minHeapSize = "128m"
-        maxHeapSize = "512m"
+        minHeapSize = '128m'
+        maxHeapSize = '512m'
         testLogging {
             exceptionFormat = 'full'
         }
